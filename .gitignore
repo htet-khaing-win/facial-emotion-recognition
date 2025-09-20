@@ -205,3 +205,124 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ==============================================================================
+# ML/DATA SCIENCE SPECIFIC ADDITIONS
+# ==============================================================================
+
+# Datasets - Usually too large for Git, download separately
+data/
+datasets/
+*.csv
+*.json
+*.parquet
+*.h5
+*.hdf5
+
+# Compressed data files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Model files - Can be very large
+models/
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.pb
+*.tflite
+*.keras
+*.model
+checkpoints/
+saved_models/
+weights/
+
+# TensorFlow specific
+*.ckpt*
+*tfevents*
+*.meta
+*.index
+*.data-*
+
+# PyTorch specific
+*.pth.tar
+lightning_logs/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Weights & Biases
+wandb/
+
+# DVC (Data Version Control)
+.dvc/
+*.dvc
+
+# Experiment tracking
+experiments/
+runs/
+logs/
+tensorboard_logs/
+
+# Generated plots and visualizations
+plots/
+figures/
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+*.eps
+
+# Outputs and results
+outputs/
+results/
+predictions/
+submissions/
+
+# Notebooks with outputs (keep clean versions in Git)
+*-checkpoint.ipynb
+*-Copy*.ipynb
+*Untitled*.ipynb
+
+# Data processing temporary files
+temp/
+tmp/
+cache/
+.cache/
+
+# Configuration files with secrets
+config.ini
+config.yaml
+.env.local
+.env.production
+secrets.json
+credentials.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Matplotlib/Seaborn cache
+.matplotlib/
+
+# Scikit-learn cache
+sklearn_cache/
+
+# CUDA cache
+.nv/*.npy
+*.npz
+data/
+*.npy
+*.npz
+data/
