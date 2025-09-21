@@ -4,17 +4,20 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 import matplotlib.pyplot as plt
 
-DATA_PATH = "../data/processed/"
+DATA_PATH = "data/processed/"
 
 #loading data
 
 X_train = np.load(os.path.join(DATA_PATH, "X_train.npy"))
 X_test  = np.load(os.path.join(DATA_PATH,"X_test.npy"))
-y_train = np.load(os.path.join(DATA_PATH, "y_train.npy"))
-y_test  = np.load(os.path.join(DATA_PATH,"y_test.npy"))
+y_train = np.load(os.path.join(DATA_PATH, "y_train_cat.npy"))  # Use the _cat files
+y_test  = np.load(os.path.join(DATA_PATH,"y_test_cat.npy"))
 
 print("Train shape: ", X_train.shape, y_train.shape)
 
+# For Debugging
+print("Train shape: ", X_train.shape, y_train.shape)
+print("Label sample:", y_train[0])  # This will show if it's one-hot or integer
 
 # Baseline CNN model
 model = models.Sequential([
@@ -28,7 +31,7 @@ model = models.Sequential([
 ])
 
 model.compile(optimizer='adam',
-              loss='categorical_crossentropy',
+              loss='categorical_crossentropy',  
               metrics=['accuracy'])
 
 # # Train
