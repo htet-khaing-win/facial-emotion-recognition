@@ -16,3 +16,9 @@ Base Line and Augmented show healthy learning curve but accuracy can be improved
 Record baseline vs augmented performance (test accuracy).
 
 Note validation accuracy improvement with checkpointing.
+
+### Current Model
+
+Positive emotion specialist - Happy/Surprise Good 
+Negative emotion struggles - Fear/Disgust/Sad Bad
+
