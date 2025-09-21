@@ -3,7 +3,9 @@ import os
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
+
 
 DATA_PATH = "data/processed/"
 
@@ -35,10 +37,18 @@ model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
+checkpoint_cb = ModelCheckpoint(
+    "models/cnn_augmented_best.h5",
+    save_best_only=True,
+    monitor="val_accuracy",
+    mode="max"
+)
+
 history = model.fit(
     datagen.flow(X_train, y_train, batch_size=64),
     validation_data=(X_test, y_test),
-    epochs=10
+    epochs=30,
+    callbacks=[checkpoint_cb]
 )
 
 os.makedirs("models", exist_ok=True)
