@@ -29,3 +29,6 @@ Negative emotion struggles - Fear/Disgust/Sad Bad
 - Evaluation scripts confirm which classes need more attention.  
 
 Next step → focus on deeper CNN + tuning hyperparameters.
+
+
+lr = 0.0005 work best for the hyper parameter but still worse than the baseline which is 55% 
