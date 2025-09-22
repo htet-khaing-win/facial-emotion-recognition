@@ -1,9 +1,9 @@
 import numpy as np
 import os
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers, models, optimizers
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 
 DATA_PATH = "data/processed/" 
 X_train = np.load(os.path.join(DATA_PATH, "X_train.npy"))
@@ -46,30 +46,40 @@ model = models.Sequential([
 
 ])
 
-model.compile(optimizer='adam', #best compiler
-              loss = 'categorical_crossentropy',
-              metrics=['accuracy'])
+model.compile(
+    optimizer=optimizers.Adam(learning_rate=0.001),
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
 
 checkpoint_cb = ModelCheckpoint(
-    "models/deeper_cnn_best.h5",
+    "models/cnn_callbacks_best.h5",
     save_best_only = True,
     monitor = "val_accuracy",
     mode = "max"
 ) 
 
 earlystop_cb = EarlyStopping(
-    monitor = "val_accuracy",
-    patience = 5,
-    restore_best_weights = True
+    monitor="val_accuracy",
+    patience=5,
+    restore_best_weights=True
+)
+
+reduce_lr_cb = ReduceLROnPlateau(
+    monitor="val_loss",
+    factor=0.5,
+    patience=3,
+    min_lr=1e-6,
+    verbose=1
 )
 
 history = model.fit(
-    datagen.flow(X_train, y_train, batch_size = 64),
-    validation_data = (X_test, y_test),
-    epochs = 50,
-    callbacks = [checkpoint_cb, earlystop_cb]
+    datagen.flow(X_train, y_train, batch_size=64),
+    validation_data=(X_test, y_test),
+    epochs=40,
+    callbacks=[checkpoint_cb, earlystop_cb, reduce_lr_cb],
+    verbose=2
 )
 
-# Save final model
-os.makedirs("models", exist_ok= True)
-model.save("models/deeper_cnn.h5")
+os.makedirs("models", exist_ok=True)
+model.save("models/cnn_callbacks_final.h5")
