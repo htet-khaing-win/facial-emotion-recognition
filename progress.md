@@ -23,3 +23,9 @@ Positive emotion specialist - Happy/Surprise Good
 
 Negative emotion struggles - Fear/Disgust/Sad Bad
 
+### End of Phase 1 
+- All core preprocessing + baseline model experiments finished.  
+- Augmentation and checkpointing working correctly.  
+- Evaluation scripts confirm which classes need more attention.  
+
+Next step → focus on deeper CNN + tuning hyperparameters.
