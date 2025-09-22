@@ -35,7 +35,11 @@ lr = 0.0005 work best for the hyper parameter but still worse than the baseline 
 
 
 ### Model	Validation Loss	Validation Accuracy
+
 Baseline CNN	1.4071	0.5280
+
 Augmented CNN	1.1130	0.5839
+
 Deeper CNN	1.0340	0.6154
+
 Deeper CNN with Callbacks	1.0119	0.6204
