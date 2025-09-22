@@ -1,0 +1,4 @@
+baseline: Loss=1.4071, Accuracy=0.5280
+augmented_best: Loss=1.1130, Accuracy=0.5839
+deeper_best: Loss=1.0340, Accuracy=0.6154
+callbacks_best: Loss=1.0119, Accuracy=0.6204
