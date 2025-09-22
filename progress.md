@@ -43,3 +43,12 @@ Augmented CNN	1.1130	0.5839
 Deeper CNN	1.0340	0.6154
 
 Deeper CNN with Callbacks	1.0119	0.6204
+
+
+### End of Phase 2  
+- CNN development completed with multiple variants.  
+- Best performing CNN identified and saved.  
+- All evaluation scripts in place (confusion matrix, comparison).  
+
+Next → Week 3 (Transfer Learning with MobileNetV2).  
+
