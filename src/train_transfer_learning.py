@@ -24,9 +24,9 @@ def resize_images(X, target_size=(96, 96)):
         resized[i] = np.expand_dims(resized_img, axis=-1)  # Add channel back
     return resized
 
-print("Resizing images from 48x48 to 96x96...")
-X_train = resize_images(X_train, (96, 96))
-X_test = resize_images(X_test, (96, 96))
+print("Resizing images from 48x48 to 224x224...")
+X_train = resize_images(X_train, (224, 224))
+X_test = resize_images(X_test, (224, 224))
 print(f"New shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
 
 # Data Augmentation
@@ -47,7 +47,7 @@ X_test_rgb = np.repeat(X_test, 3, axis= -1)
 base_model = MobileNetV2(
     weights = "imagenet",
     include_top = False,
-    input_shape = (96, 96, 3)  # Changed from (48, 48, 3) to (96, 96, 3)
+    input_shape = (224, 224, 3)  # Changed from (48, 48, 3) to (96, 96, 3)
 )
 base_model.trainable = True
 
@@ -71,13 +71,14 @@ model.compile(
 )
 
 checkpoint_cb = ModelCheckpoint(
-    "models/mobilenetv2_finetuned_best.h5",
+    "models/mobilenetv2_finetuned_224x224_best.h5",
     save_best_only = True,
     monitor = "val_accuracy",
     mode = "max"
 ) 
 
 callbacks = [
+    checkpoint_cb,
     tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True),
     tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.2, patience=3)
 ]
@@ -119,8 +120,8 @@ plt.show()
 
 # Save model
 os.makedirs("models", exist_ok=True)
-model.save("models/mobilenetv2_finetuned_final.h5")
+model.save("models/mobilenetv2_finetuned_224x224_final.h5")
 
 # Evaluate
 loss, acc = model.evaluate(X_test_rgb, y_test, verbose=0)
-print(f" MobileNetV2 (fine-tuned & Resized) Test Accuracy: {acc:.4f}")
+print(f" MobileNetV2 (fine-tuned & Resized 224) Test Accuracy: {acc:.4f}")
