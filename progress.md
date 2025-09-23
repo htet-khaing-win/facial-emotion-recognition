@@ -65,7 +65,18 @@ Next → Week 3 (Transfer Learning with MobileNetV2).
  
 - Compared CNNs vs MobileNetV2 (frozen + fine-tuned).  
 - Saved comparison results in `results/`.  
-- Clear bar chart visualization included.  
+- Clear bar chart visualization included.
+
+####MobileNetV2 Transfer Learning Optimization
+
+- Fixed critical learning rate issue: Changed from 1e-5 to 1e-4 (10x increase)
+- Implemented image resizing: Upgraded input from 48x48 to 96x96 pixels
+- Updated callbacks strategy: Added ModelCheckpoint with val_accuracy monitoring
+- Results: MobileNetV2 accuracy improved from 43.37% → ~60% (+16.63% gain)
+- Learning curves: Achieved healthy training with no overfitting, validation ≥ training accuracy
+- Model ranking: Moved from 5th to 3rd position, now competitive with custom CNNs
+
+Key learnings: Input size mismatch was major bottleneck for transfer learning. Pre-trained models need appropriate input dimensions to leverage ImageNet features effectively.
 
 
 
