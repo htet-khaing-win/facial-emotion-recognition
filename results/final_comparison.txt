@@ -1,0 +1,8 @@
+cnn_baseline: Loss=1.4071, Accuracy=0.5280
+cnn_augmented: Loss=1.1130, Accuracy=0.5839
+cnn_deeper: Loss=1.0340, Accuracy=0.6154
+cnn_callbacks: Loss=1.0119, Accuracy=0.6204
+mobilenet_frozen: Loss=1.5915, Accuracy=0.3672
+mobilenet_finetuned: Loss=1.4778, Accuracy=0.4337
+mobilenet_finetuned 96x96: Loss=1.1130, Accuracy=0.5965
+mobilenet_finetuned 224x224: Loss=0.9455, Accuracy=0.6594
