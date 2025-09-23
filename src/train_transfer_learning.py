@@ -6,12 +6,28 @@ from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
+import cv2
 
 DATA_PATH = "data/processed/"
 X_train = np.load(os.path.join(DATA_PATH, "X_train.npy"))
 X_test = np.load(os.path.join(DATA_PATH, "X_test.npy"))
 y_train = np.load(os.path.join(DATA_PATH, "y_train_cat.npy"))
 y_test = np.load(os.path.join(DATA_PATH, "y_test_cat.npy"))
+
+def resize_images(X, target_size=(96, 96)):
+    """Resize images to target size"""
+    resized = np.zeros((X.shape[0], target_size[0], target_size[1], X.shape[3]))
+    for i in range(X.shape[0]):
+        # Squeeze to remove single channel dimension, then resize
+        img = np.squeeze(X[i])  # (48,48,1) -> (48,48)
+        resized_img = cv2.resize(img, target_size)
+        resized[i] = np.expand_dims(resized_img, axis=-1)  # Add channel back
+    return resized
+
+print("Resizing images from 48x48 to 96x96...")
+X_train = resize_images(X_train, (96, 96))
+X_test = resize_images(X_test, (96, 96))
+print(f"New shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
 
 # Data Augmentation
 datagen = ImageDataGenerator(
@@ -23,7 +39,7 @@ datagen = ImageDataGenerator(
 )
 datagen.fit(X_train)
 
-# Expand grayscale to RGB for MobileNetV2  (48x48x1) → RGB (48x48x3)
+# Expand grayscale to RGB for MobileNetV2 
 
 X_train_rgb = np.repeat(X_train, 3, axis= -1)
 X_test_rgb = np.repeat(X_test, 3, axis= -1)
@@ -31,7 +47,7 @@ X_test_rgb = np.repeat(X_test, 3, axis= -1)
 base_model = MobileNetV2(
     weights = "imagenet",
     include_top = False,
-    input_shape = (48, 48, 3)
+    input_shape = (96, 96, 3)  # Changed from (48, 48, 3) to (96, 96, 3)
 )
 base_model.trainable = True
 
@@ -49,10 +65,17 @@ model = models.Sequential([
 
 
 model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),  # smaller LR
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), 
     loss="categorical_crossentropy",
     metrics=["accuracy"]
 )
+
+checkpoint_cb = ModelCheckpoint(
+    "models/mobilenetv2_finetuned_best.h5",
+    save_best_only = True,
+    monitor = "val_accuracy",
+    mode = "max"
+) 
 
 callbacks = [
     tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True),
@@ -62,7 +85,7 @@ callbacks = [
 history = model.fit(
     datagen.flow(X_train_rgb, y_train, batch_size=64),
     validation_data=(X_test_rgb, y_test),
-    epochs=40,
+    epochs=50,
     callbacks = callbacks
 )
 
@@ -96,8 +119,8 @@ plt.show()
 
 # Save model
 os.makedirs("models", exist_ok=True)
-model.save("models/mobilenetv2_finetuned.h5")
+model.save("models/mobilenetv2_finetuned_final.h5")
 
 # Evaluate
 loss, acc = model.evaluate(X_test_rgb, y_test, verbose=0)
-print(f" MobileNetV2 (fine-tuned) Test Accuracy: {acc:.4f}")
+print(f" MobileNetV2 (fine-tuned & Resized) Test Accuracy: {acc:.4f}")
