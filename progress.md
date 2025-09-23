@@ -82,4 +82,5 @@ Key learnings: Input size mismatch was major bottleneck for transfer learning. P
 - Tried out both 96x96 and 224x224  
 - Test accuracy: ~66% (improved over the 48x48 and 96x96).
 - ran into overfitting but callback solved it
+- - Saved model as `mobilenetv2_finetuned_224x224_best.h5`.  
 
