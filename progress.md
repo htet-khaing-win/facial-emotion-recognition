@@ -62,6 +62,10 @@ Next → Week 3 (Transfer Learning with MobileNetV2).
 - Saved model as `mobilenetv2_finetuned.h5`.  
 - Test accuracy: ~43% (~+6% improved over frozen baseline).  
 
+ 
+- Compared CNNs vs MobileNetV2 (frozen + fine-tuned).  
+- Saved comparison results in `results/`.  
+- Clear bar chart visualization included.  
 
 
 
