@@ -67,7 +67,7 @@ Next → Week 3 (Transfer Learning with MobileNetV2).
 - Saved comparison results in `results/`.  
 - Clear bar chart visualization included.
 
-###MobileNetV2 Transfer Learning Optimization
+### MobileNetV2 Transfer Learning Optimization
 
 - Fixed critical learning rate issue: Changed from 1e-5 to 1e-4 (10x increase)
 - Implemented image resizing: Upgraded input from 48x48 to 96x96 pixels
@@ -82,5 +82,10 @@ Key learnings: Input size mismatch was major bottleneck for transfer learning. P
 - Tried out both 96x96 and 224x224  
 - Test accuracy: ~66% (improved over the 48x48 and 96x96).
 - ran into overfitting but callback solved it
-- - Saved model as `mobilenetv2_finetuned_224x224_best.h5`.  
+- Saved model as `mobilenetv2_finetuned_224x224_best.h5`.
+
+### Interface
+- Implemented real-time webcam inference with OpenCV.  
+- Successfully displays bounding boxes + predicted emotion labels in real time. 
+ 
 
