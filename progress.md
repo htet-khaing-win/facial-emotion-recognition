@@ -55,5 +55,13 @@ Next → Week 3 (Transfer Learning with MobileNetV2).
 - Trained MobileNetV2 with frozen backbone.  
 - Saved model as `mobilenetv2_frozen.h5`.  
 - Test accuracy: ~37% (baseline transfer learning).  
-- Next → fine-tune top layers of MobileNetV2 for higher accuracy.  
+- Next → fine-tune top layers of MobileNetV2 for higher accuracy.
+
+- Fine-tuned top 30 layers of MobileNetV2.  
+- Used low LR + callbacks (EarlyStopping, ReduceLROnPlateau).  
+- Saved model as `mobilenetv2_finetuned.h5`.  
+- Test accuracy: ~43% (~+6% improved over frozen baseline).  
+
+
+
 
