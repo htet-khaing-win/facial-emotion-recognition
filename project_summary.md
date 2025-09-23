@@ -16,3 +16,15 @@
 - Baseline: 52.8% accuracy, 1.407 loss
 - Augmented: 53.1% accuracy, 1.229 loss  
 - Context: Human performance ~87%, Random ~14%
+
+## Phase 2 Summary  
+- ✅ Built deeper CNN with Dropout regularization.  
+- ✅ Tuned hyperparameters (learning rate, batch size).  
+- ✅ Added EarlyStopping + ReduceLROnPlateau for stable training.  
+- ✅ Compared all CNNs: baseline, augmented, deeper, callbacks.  
+- ✅ Best model: callbacks CNN with validation accuracy ~62%.  
+
+**Key Insights:**  
+- Dropout + callbacks improved stability.  
+- Still confusion between similar emotions .  
+
