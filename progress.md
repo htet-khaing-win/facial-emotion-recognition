@@ -51,4 +51,9 @@ Deeper CNN with Callbacks	1.0119	0.6204
 - All evaluation scripts in place (confusion matrix, comparison).  
 
 Next → Week 3 (Transfer Learning with MobileNetV2).  
+ 
+- Trained MobileNetV2 with frozen backbone.  
+- Saved model as `mobilenetv2_frozen.h5`.  
+- Test accuracy: ~37% (baseline transfer learning).  
+- Next → fine-tune top layers of MobileNetV2 for higher accuracy.  
 
