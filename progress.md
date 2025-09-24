@@ -86,6 +86,10 @@ Key learnings: Input size mismatch was major bottleneck for transfer learning. P
 
 ### Interface
 - Implemented real-time webcam inference with OpenCV.  
-- Successfully displays bounding boxes + predicted emotion labels in real time. 
+- Successfully displays bounding boxes + predicted emotion labels in real time.  
+- Built Streamlit app (`fer_app.py`) with two modes: Webcam & Upload Image.  
+- Integrated MobileNetV2 fine-tuned model.  
+- Real-time FER works via Streamlit frontend.  
+
  
 
