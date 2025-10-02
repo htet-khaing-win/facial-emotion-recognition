@@ -6,7 +6,7 @@ import time
 
 # Load best model
 print("Loading model...")
-model = tf.keras.models.load_model("models/mobilenetv2_finetuned_224x224_best.h5")
+model = tf.keras.models.load_model("models/vgg16_conservative_img160_dr0.28_lr0.0001_final.h5")
 
 # Emotion Labels
 class_labels = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
@@ -55,7 +55,7 @@ while True:
         for (x, y, w, h) in faces:
             # Extract and process ROI
             roi_gray = gray[y:y+h, x:x+w]
-            roi_gray = cv2.resize(roi_gray, (224, 224))
+            roi_gray = cv2.resize(roi_gray, (160, 160))
             roi_gray = roi_gray.astype("float32") / 255.0
             roi_rgb = np.repeat(roi_gray[..., np.newaxis], 3, -1)
             roi_rgb = np.expand_dims(roi_rgb, axis=0)
