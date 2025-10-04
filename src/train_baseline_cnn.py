@@ -2,7 +2,9 @@ import numpy as np
 import os
 import tensorflow as tf
 from tensorflow.keras import layers, models
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 DATA_PATH = "data/processed/"
 
@@ -19,20 +21,36 @@ print("Train shape: ", X_train.shape, y_train.shape)
 print("Train shape: ", X_train.shape, y_train.shape)
 print("Label sample:", y_train[0])  # This will show if it's one-hot or integer
 
+
 # Baseline CNN model
+# Baseline CNN model with Dropout
 model = models.Sequential([
     layers.Conv2D(32, (3,3), activation='relu', input_shape=(48,48,1)),
     layers.MaxPooling2D((2,2)),
     layers.Conv2D(64, (3,3), activation='relu'),
     layers.MaxPooling2D((2,2)),
     layers.Flatten(),
-    layers.Dense(128, activation='relu'),
+    layers.Dropout(0.5), 
+    layers.Dense(64, activation='relu'),
+    # layers.Dropout(0.5),
     layers.Dense(7, activation='softmax')
 ])
 
-model.compile(optimizer='adam',
-              loss='categorical_crossentropy',  
-              metrics=['accuracy'])
+datagen = ImageDataGenerator(
+    rotation_range = 20,
+    width_shift_range = 0.2,
+    height_shift_range = 0.2,
+    zoom_range = 0.2,
+    horizontal_flip = True,
+    fill_mode='nearest'
+)
+datagen.fit(X_train)
+
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), 
+    loss="categorical_crossentropy",
+    metrics=["accuracy"]
+)
 
 # # Train
 # history = model.fit(
