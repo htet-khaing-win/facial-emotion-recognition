@@ -1,18 +1,14 @@
-# Core ML frameworks
-tensorflow==2.11.0
-tensorflow-addons==0.17.1
-tensorflow-datasets==4.8.2
+tensorflow==2.12.0
+tensorflow-estimator==2.12.0
+tensorboard==2.12.0
+tensorflow-addons==0.20.0
+tensorflow-datasets==4.9.2
 tensorflow-io-gcs-filesystem==0.31.0
 
-# TensorBoard (compatible with TF 2.11)
-tensorboard==2.11.0
-tensorflow-estimator==2.11.0
-
-# Computer Vision
 opencv-python==4.7.0.72
 Pillow
 
-# Data Science
+
 numpy
 pandas
 scikit-learn==1.2.2
@@ -22,16 +18,15 @@ seaborn
 plotly
 altair
 
-# Streamlit + WebRTC
+
 streamlit==1.50.0
 streamlit-webrtc==0.63.5
 
-# Utilities
 requests
-protobuf  # do not pin → let Streamlit/TF resolve
 h5py
 joblib
 tqdm
 attrs
 jinja2
 werkzeug
+
