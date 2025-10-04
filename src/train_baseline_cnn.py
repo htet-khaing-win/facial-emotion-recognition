@@ -62,11 +62,17 @@ model.compile(
 
 # After Training
 
+callbacks = [
+    tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=3, restore_best_weights=True),
+    tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.2, patience=2)
+]
+
 history = model.fit(
-    X_train, y_train,
+    datagen.flow(X_train, y_train, batch_size=32),  # Use datagen.flow for augmentation
     validation_data=(X_test, y_test),
-    epochs=10, #increase to see clearer trends
-    batch_size=64
+    epochs=50,  # Increase epochs, rely on early stopping
+    steps_per_epoch=len(X_train) // 32,  # Required for datagen.flow
+    callbacks=callbacks
 )
 
 # Plot accuracy and loss
