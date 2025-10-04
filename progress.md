@@ -87,7 +87,7 @@ Key learnings: Input size mismatch was major bottleneck for transfer learning. P
 - Implemented real-time webcam inference with OpenCV.  
 - Successfully displays bounding boxes + predicted emotion labels in real time.  
 - Built Streamlit app (`vibecheck.py`). 
-- Integrated MobileNetV2 fine-tuned 224x224 model.  
+- Integrated VGG16 fine-tuned 224x224 model.  
 - Real-time FER works via Streamlit frontend.  
 
 ### VGG Transfer Learning
