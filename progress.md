@@ -74,7 +74,6 @@ Next → Week 3 (Transfer Learning with MobileNetV2).
 - Updated callbacks strategy: Added ModelCheckpoint with val_accuracy monitoring
 - Results: MobileNetV2 accuracy improved from 43.37% → ~60% (+16.63% gain)
 - Learning curves: Achieved healthy training with no overfitting, validation ≥ training accuracy
-- Model ranking: Moved from 5th to 3rd position, now competitive with custom CNNs
 
 Key learnings: Input size mismatch was major bottleneck for transfer learning. Pre-trained models need appropriate input dimensions to leverage ImageNet features effectively.
 
@@ -90,6 +89,13 @@ Key learnings: Input size mismatch was major bottleneck for transfer learning. P
 - Built Streamlit app (`vibecheck.py`). 
 - Integrated MobileNetV2 fine-tuned 224x224 model.  
 - Real-time FER works via Streamlit frontend.  
+
+### VGG Transfer Learning
+- Achieved 69% accuracy using 160x160
+- Learning curves: Achieved healthy training with no overfitting
+- Generated `requirements.txt`.  
+- Updated `README.md` with installation and usage guide.  
+- Tested app from clean environment.  
 
  
 
