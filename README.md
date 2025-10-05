@@ -12,3 +12,8 @@ Real-time Facial Emotion Recognition using deep learning.
 git clone <[https://github.com/htet-khaing-win/facial-emotion-recognition]>
 cd facial-emotion-recongnition
 pip install -r requirements.txt
+```
+
+## 🌐 Live Demos
+- [Streamlit Cloud App](https://vibe-check-by-hkw.streamlit.app/)
+- [Hugging Face Spaces App](https://huggingface.co/spaces/hkw1/Vibe-Check-by-hkw)
