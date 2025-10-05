@@ -6,6 +6,8 @@ from PIL import Image
 import time
 from collections import deque
 import plotly.graph_objects as go
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode, RTCConfiguration
+import av
 
 # --- Page setup ---
 st.set_page_config(
@@ -21,14 +23,14 @@ st.markdown("""
     
     html, body, [class*="css"] {
         font-family: 'Poppins', sans-serif;
-        background-color: #0f172a; /* dark navy base */
-        color: #e2e8f0; /* light gray text */
+        background-color: #0f172a;
+        color: #e2e8f0;
     }
     
     .main-header {
         font-size: 3rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%); /* electric blue gradient */
+        background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
@@ -37,7 +39,7 @@ st.markdown("""
     }
     
     .profile-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%); /* dark slate gradient */
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         padding: 2rem;
         border-radius: 15px;
         color: #f1f5f9;
@@ -50,7 +52,7 @@ st.markdown("""
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
-        color: #38bdf8; /* cyan highlight */
+        color: #38bdf8;
     }
     
     .profile-title {
@@ -68,7 +70,7 @@ st.markdown("""
     }
     
     .social-link {
-        background: rgba(51, 65, 85, 0.7);  /* translucent dark blue-gray */
+        background: rgba(51, 65, 85, 0.7);
         padding: 0.5rem 1rem;
         border-radius: 12px;
         border: 1px solid rgba(148, 163, 184, 0.4);
@@ -82,7 +84,7 @@ st.markdown("""
     }
 
     .social-link:hover {
-        background: rgba(59, 130, 246, 0.3);  /* subtle blue on hover */
+        background: rgba(59, 130, 246, 0.3);
         border: 1px solid rgba(59, 130, 246, 0.5);
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
@@ -122,7 +124,6 @@ def load_model():
         model = tf.keras.models.load_model(
             "models/vgg16_conservative_img160_dr0.28_lr0.0001_best.h5"
         )
-        # Warm up the model
         dummy_input = np.zeros((1, 160, 160, 3), dtype=np.float32)
         model.predict(dummy_input, verbose=0)
         return model
@@ -157,21 +158,22 @@ if face_cascade.empty():
     st.stop()
 
 # --- Session State Initialization ---
-if 'run_camera' not in st.session_state:
-    st.session_state.run_camera = False
 if 'last_faces' not in st.session_state:
     st.session_state.last_faces = []
+if 'frame_count' not in st.session_state:
+    st.session_state.frame_count = 0
+if 'fps_list' not in st.session_state:
+    st.session_state.fps_list = deque(maxlen=10)
 
 # --- Profile Section ---
 st.markdown('<h1 class="main-header">🎭 Vibe Check</h1>', unsafe_allow_html=True)
 
-# Personal Info 
 st.markdown("""
 <div class="profile-card">
     <div class="profile-name">Hey👋, I'm Htet Khaing Win</div>
-    <div class="profile-title">AI/ML nerd</div>
+    <div class="profile-title">AI/ML Enthusiast 🤓</div>
     <p style="margin-bottom: 1rem;">
-        Just a nerd trying to be better!
+        Building cool stuff with AI. This app reads your emotions in real-time. Give it a try!
     </p>
     <div class="social-links">
         <a href="https://www.linkedin.com/in/htet-khaing-win/" target="_blank" class="social-link">🔗 LinkedIn</a>
@@ -249,12 +251,10 @@ if mode == "📸 Upload Image":
     )
     
     if uploaded_file is not None:
-        # Load and process image
         image = Image.open(uploaded_file).convert("RGB")
         img_array = np.array(image)
         gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
         
-        # Detect faces
         faces = face_cascade.detectMultiScale(gray, 1.1, 5)
         
         if len(faces) == 0:
@@ -262,7 +262,6 @@ if mode == "📸 Upload Image":
         else:
             st.success(f" Detected {len(faces)} face(s)")
             
-            # Process each face
             results = []
             for (x, y, w, h) in faces:
                 face = gray[y:y+h, x:x+w]
@@ -270,11 +269,9 @@ if mode == "📸 Upload Image":
                 emotion = EMOTIONS[np.argmax(preds)]
                 confidence = np.max(preds)
                 
-                # Draw on image
                 color = EMOTION_COLORS.get(emotion, (0, 255, 0))
                 cv2.rectangle(img_array, (x, y), (x+w, y+h), color, 3)
                 
-                # Add label with background
                 label = f"{emotion}: {confidence:.2f}"
                 label_size, _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)
                 cv2.rectangle(img_array, (x, y - label_size[1] - 15), 
@@ -288,7 +285,6 @@ if mode == "📸 Upload Image":
                     'predictions': preds
                 })
             
-            # Display results
             col1, col2 = st.columns([2, 1])
             
             with col1:
@@ -301,151 +297,146 @@ if mode == "📸 Upload Image":
                     st.metric("Confidence", f"{result['confidence']:.2%}")
                     st.markdown("---")
             
-            # Show probability distribution for first face
             if results:
-                st.markdown("### 📊 Detailed Analysis (Face 1)")
+                st.markdown("### 📊 Detailed Vibe Analysis (Face 1)")
                 plot_probabilities(results[0]['predictions'])
 
 # --- LIVE CAMERA MODE ---
 else:
     st.markdown("---")
     
-    def process_frame(frame, frame_count, process_interval=10):
-        """Process a single frame with optimized detection and prediction"""
-        scale = 0.5
-        small_frame = cv2.resize(frame, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
-        gray = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
-        
-        if frame_count % process_interval == 0:
-            faces = face_cascade.detectMultiScale(
-                gray, 
-                scaleFactor=1.3, 
-                minNeighbors=5,
-                minSize=(30, 30),
-                flags=cv2.CASCADE_SCALE_IMAGE
-            )
+    # WebRTC Video Processor (Modern API)
+    class EmotionVideoProcessor(VideoProcessorBase):
+        def __init__(self):
+            self.frame_count = 0
+            self.process_interval = 10
+            self.last_faces_local = []
             
-            st.session_state.last_faces = []
+        def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+            img = frame.to_ndarray(format="bgr24")
             
-            for (x, y, w, h) in faces:
-                x, y, w, h = int(x/scale), int(y/scale), int(w/scale), int(h/scale)
-                face_roi = cv2.cvtColor(frame[y:y+h, x:x+w], cv2.COLOR_BGR2GRAY)
+            # Only do heavy processing every N frames
+            if self.frame_count % self.process_interval == 0:
+                # Process on smaller frame for speed (but not too small)
+                scale = 0.6  # Increased from 0.5 for better detection quality
+                small_frame = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+                gray = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
                 
-                try:
-                    predictions = predict_emotion(face_roi)
-                    emotion = EMOTIONS[np.argmax(predictions)]
-                    confidence = np.max(predictions)
+                # Face detection
+                faces = face_cascade.detectMultiScale(
+                    gray, 
+                    scaleFactor=1.2,
+                    minNeighbors=4,
+                    minSize=(30, 30)
+                )
+                
+                self.last_faces_local = []
+                
+                for (x, y, w, h) in faces:
+                    # Scale back to original size
+                    x, y, w, h = int(x/scale), int(y/scale), int(w/scale), int(h/scale)
+                    face_roi = cv2.cvtColor(img[y:y+h, x:x+w], cv2.COLOR_BGR2GRAY)
                     
-                    st.session_state.last_faces.append({
-                        'bbox': (x, y, w, h),
-                        'emotion': emotion,
-                        'confidence': confidence
-                    })
-                except Exception as e:
-                    continue
-        
-        for face_data in st.session_state.last_faces:
-            x, y, w, h = face_data['bbox']
-            emotion = face_data['emotion']
-            confidence = face_data['confidence']
-            color = EMOTION_COLORS.get(emotion, (255, 255, 255))
+                    try:
+                        predictions = predict_emotion(face_roi)
+                        emotion = EMOTIONS[np.argmax(predictions)]
+                        confidence = np.max(predictions)
+                        
+                        self.last_faces_local.append({
+                            'bbox': (x, y, w, h),
+                            'emotion': emotion,
+                            'confidence': confidence
+                        })
+                    except:
+                        pass
+                
+                # Update session state
+                st.session_state.last_faces = self.last_faces_local.copy()
             
-            cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
+            # Draw annotations with anti-aliasing for crisp text
+            for face_data in self.last_faces_local:
+                x, y, w, h = face_data['bbox']
+                emotion = face_data['emotion']
+                confidence = face_data['confidence']
+                color = EMOTION_COLORS.get(emotion, (255, 255, 255))
+                
+                # Draw thicker rectangle for better visibility
+                cv2.rectangle(img, (x, y), (x+w, y+h), color, 4)
+                
+                # Label with better rendering
+                label = f"{emotion}: {confidence:.2f}"
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                font_scale = 0.9
+                font_thickness = 3
+                
+                # Get text size for background
+                (text_width, text_height), baseline = cv2.getTextSize(
+                    label, font, font_scale, font_thickness
+                )
+                
+                # Draw semi-transparent background for text
+                padding = 8
+                cv2.rectangle(
+                    img,
+                    (x, y - text_height - padding * 2),
+                    (x + text_width + padding * 2, y),
+                    color,
+                    -1
+                )
+                
+                # Draw white text with anti-aliasing
+                cv2.putText(
+                    img,
+                    label,
+                    (x + padding, y - padding),
+                    font,
+                    font_scale,
+                    (255, 255, 255),  # White text for contrast
+                    font_thickness,
+                    cv2.LINE_AA  # Anti-aliasing for smooth text
+                )
             
-            label = f"{emotion}: {confidence:.2f}"
-            label_size, _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
-            cv2.rectangle(frame, (x, y - label_size[1] - 10), 
-                         (x + label_size[0], y), color, -1)
-            cv2.putText(frame, label, (x, y - 5), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 2)
-        
-        return frame
-
+            self.frame_count += 1
+            
+            return av.VideoFrame.from_ndarray(img, format="bgr24")
+    
     col1, col2 = st.columns([3, 1])
 
     with col1:
         st.subheader("📹 Live Camera Feed")
-        video_placeholder = st.empty()
+        
+        RTC_CONFIGURATION = RTCConfiguration(
+            {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+        )
+        
+        webrtc_ctx = webrtc_streamer(
+            key="emotion-detection",
+            mode=WebRtcMode.SENDRECV,
+            rtc_configuration=RTC_CONFIGURATION,
+            video_processor_factory=EmotionVideoProcessor,
+            media_stream_constraints={
+                "video": {
+                    "width": {"min": 1280, "ideal": 1920, "max": 1920},
+                    "height": {"min": 720, "ideal": 1080, "max": 1080},
+                    "frameRate": {"ideal": 30, "max": 30},
+                    "facingMode": "user"
+                },
+                "audio": False
+            },
+            async_processing=True,
+        )
 
     with col2:
-        st.subheader("⚙️ Controls")
+        # st.subheader("⚙️ Controls")
+        # st.info(" Click 'START' to begin")
         
-        col_btn1, col_btn2 = st.columns(2)
-        
-        with col_btn1:
-            if st.button("▶️ Start", use_container_width=True, type="primary", 
-                         disabled=st.session_state.run_camera):
-                st.session_state.run_camera = True
-                st.rerun()
-        
-        with col_btn2:
-            if st.button("⏹️ Stop", use_container_width=True, type="secondary", disabled=not st.session_state.run_camera):
-                st.session_state.run_camera = False
-                st.session_state.last_faces = []
-                if "cap" in st.session_state and st.session_state.cap.isOpened():
-                    st.session_state.cap.release()
-                st.rerun()
-        
-        st.divider()
+        # st.divider()
         
         st.subheader("Stats")
-        fps_text = st.empty()
-        faces_text = st.empty()
-
-    if st.session_state.run_camera:
-        cap = cv2.VideoCapture(0)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        cap.set(cv2.CAP_PROP_FPS, 30)
-        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-        
-        if not cap.isOpened():
-            st.error("Could not open camera")
-            st.session_state.run_camera = False
-            st.rerun()
+        if webrtc_ctx.state.playing:
+            st.metric("Status", "🟢 Active")
         else:
-            frame_count = 0
-            fps_list = deque(maxlen=10)
-            
-            while st.session_state.run_camera:
-                start_time = time.time()
-                
-                ret, frame = cap.read()
-                if not ret:
-                    st.warning(" Failed to read frame, retrying...")
-                    time.sleep(0.1)
-                    continue
-                
-                processed_frame = process_frame(frame, frame_count, process_interval=10)
-                rgb_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
-                video_placeholder.image(rgb_frame, channels="RGB", use_container_width=True)
-                
-                elapsed = time.time() - start_time
-                if elapsed > 0:
-                    fps = 1.0 / elapsed
-                    fps_list.append(fps)
-                    avg_fps = np.mean(fps_list)
-                    fps_text.metric("FPS", f"{avg_fps:.1f}")
-                
-                faces_text.metric("Faces", len(st.session_state.last_faces))
-                
-                frame_count += 1
-                
-                if frame_count % 10 == 0:
-                    if not st.session_state.run_camera:
-                        break
-                
-                time.sleep(0.001)
-            
-            cap.release()
-            cv2.destroyAllWindows()
-            
-            if not st.session_state.run_camera:
-                st.rerun()
-    else:
-        video_placeholder.info(" Click **'Start'** to Vibe Check!")
-        fps_text.empty()
-        faces_text.empty()
+            st.metric("Status", "⚪ Stopped")
 
 # --- Footer ---
 st.markdown("---")
