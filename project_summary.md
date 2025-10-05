@@ -1,49 +1,32 @@
-# Project Summary will be written here
 
+# Facial Emotion Recognition (FER) System
 
-## Phase 1 Summary  
-- ✅ Data preprocessing complete (train/test split, one-hot labels).  
-- ✅ Baseline CNN trained and saved.  
-- ✅ Data augmentation introduced with improved generalization.  
-- ✅ Implemented checkpointing for best model.  
-- ✅ Evaluation: accuracy, loss curves, confusion matrix, classification report.  
+## 🎯 Project Overview
+A real-time facial emotion recognition system that detects human emotions (happy, sad, angry, etc.) from webcam input using deep learning.
 
-**Key Insights:**  
-- Augmentation reduces overfitting.  
-- Certain emotions (happy, surprise) classified well; others (fear/ disgust/ sad) confused.  
+## 🧠 Models Used
+- **CNN (from scratch):** Built and trained with FER2013 dataset.
+- **Transfer Learning (MobileNetV2, VGG16):** Fine-tuned for improved accuracy and efficiency.
+- **Data Augmentation:** Applied to increase generalization.
 
-### Performance Metrics:
-- Baseline: 52.8% accuracy, 1.407 loss
-- Augmented: 53.1% accuracy, 1.229 loss  
-- Context: Human performance ~87%, Random ~14%
+## ⚙️ Tech Stack
+- **Languages:** Python  
+- **Frameworks:** TensorFlow/Keras, OpenCV, Streamlit  
+- **Deployment:** Streamlit Cloud & Hugging Face Spaces  
 
-## Phase 2 Summary  
-- ✅ Built deeper CNN with Dropout regularization.  
-- ✅ Tuned hyperparameters (learning rate, batch size).  
-- ✅ Added EarlyStopping + ReduceLROnPlateau for stable training.  
-- ✅ Compared all CNNs: baseline, augmented, deeper, callbacks.  
-- ✅ Best model: callbacks CNN with validation accuracy ~62%.  
+## 📊 Results
+- CNN Accuracy: ~62%  
+- MobileNetV2 Accuracy: ~66%  
+- VGG16 Accuracy: ~69%
 
-**Key Insights:**  
-- Dropout + callbacks improved stability.  
-- Still confusion between similar emotions .  
+## 🌐 Demo
+- [Streamlit Cloud App](https://vibe-check-by-hkw.streamlit.app/)
+- [Hugging Face Space](https://huggingface.co/spaces/hkw1/Vibe-Check-by-hkw)
+- [Demo Video](https://www.linkedin.com/posts/htet-khaing-win_been-a-while-since-i-shared-something-i-activity-7376329796387217408-MO4f?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFY_f-QBwEOCnTGX2zAJa7lXgB_cDgOstYQ)
 
-## Phase 3 Summary (Transfer Learning + App Development)
+## 💡 Key Learnings
+- Built and deployed a full ML pipeline from scratch.
+- Understood dataset preprocessing, model training, and transfer learning.
+- Gained practical experience with Streamlit and cloud deployment.
+- Practiced clean coding, version control, and documentation.  
 
-### ✅ Achievements
-- Implemented MobileNetV2 & VGG16 baseline (frozen backbone).
-- Fine-tuned MobileNetV2 and VGG16 for higher accuracy.
-- Integrated real-time face detection with OpenCV.
-- Built Streamlit demo app (Webcam + Image Upload).
-- Polished app with probability charts & cleaner UI.
-- Prepared requirements.txt & updated README for deployment.
-
-### 📊 Key Insights
-- Transfer learning (VGG16) outperforms CNN-from-scratch and MobileNetV2.
-- Converting grayscale → RGB was essential for pretrained models.
-- Streamlit made rapid prototyping and sharing straightforward.
-- Balancing performance vs. real-time speed is critical for deployment.
-
-### 🚧 Challenges
-- Debugging webcam stream inside Streamlit.
-- GPU usage still needed for fine-tuning.
