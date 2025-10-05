@@ -17,3 +17,9 @@ pip install -r requirements.txt
 ## 🌐 Live Demos
 - [Streamlit Cloud App](https://vibe-check-by-hkw.streamlit.app/)
 - [Hugging Face Spaces App](https://huggingface.co/spaces/hkw1/Vibe-Check-by-hkw)
+
+### 🧠 Tech Stack
+- Python (TensorFlow/Keras, OpenCV, Streamlit)
+- Transfer Learning (MobileNetV2, VGG16)
+- Real-time Computer Vision
+- Cloud Deployment (Streamlit Cloud, Hugging Face Spaces)
