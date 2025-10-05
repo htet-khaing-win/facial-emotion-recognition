@@ -97,5 +97,7 @@ Key learnings: Input size mismatch was major bottleneck for transfer learning. P
 - Updated `README.md` with installation and usage guide.  
 - Tested app from clean environment.  
 
- 
-
+ ### Hugging Face
+- Created Hugging Face account and new Streamlit Space.  
+- Verified app works online.  
+- Configured Docker
