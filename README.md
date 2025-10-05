@@ -5,7 +5,8 @@ Real-time Facial Emotion Recognition using deep learning.
 - CNN from scratch  
 - Transfer Learning (MobileNetV2)
 - Transfer Learning (VGG16) 
-- Streamlit demo (Webcam + Image Upload)  
+- Streamlit demo (Webcam + Image Upload)
+- Huggingface demo (Image Upload)
 
 ## ⚙️ Installation
 ```bash
